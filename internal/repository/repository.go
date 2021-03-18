@@ -1,13 +1,24 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"github.com/JavaHutt/rest-dealership/internal/model"
+	"gorm.io/gorm"
+)
 
 type Repository struct {
 	Vehicle
 }
 
 func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{}
+	return &Repository{
+		Vehicle: NewVehicleRepository(db),
+	}
 }
 
-type Vehicle interface{}
+type Vehicle interface {
+	Get()
+	GetAll() []model.Vehicle
+	Create(vehicle model.Vehicle) (*model.Vehicle, error)
+	Update()
+	Delete()
+}

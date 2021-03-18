@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/JavaHutt/rest-dealership/internal/model"
 	"github.com/JavaHutt/rest-dealership/internal/service"
 	"github.com/go-chi/chi"
 )
@@ -31,6 +33,7 @@ func (h Handler) InitRoutes() *chi.Mux {
 }
 
 func (h Handler) getAllVehicles(w http.ResponseWriter, r *http.Request) {
+	h.services.GetAll()
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("getAll method"))
 }
@@ -43,8 +46,31 @@ func (h Handler) getVehicleById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) createVehicle(w http.ResponseWriter, r *http.Request) {
+	var vehicle model.Vehicle
+
+	if err := json.NewDecoder(r.Body).Decode(&vehicle); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Bad request"))
+		return
+	}
+
+	created, err := h.services.Create(vehicle)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	res, err := json.Marshal(created)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Failed to unmarshal JSON"))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("create"))
+	w.Write(res)
 }
 
 func (h Handler) updateVehicle(w http.ResponseWriter, r *http.Request) {
