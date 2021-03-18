@@ -16,9 +16,16 @@ func NewVehicleRepository(db *gorm.DB) *VehicleRepository {
 	}
 }
 
-func (rep *VehicleRepository) Get() {
+func (rep *VehicleRepository) Get(id int) (*model.Vehicle, error) {
+	vehicle := new(model.Vehicle)
 
+	result := rep.db.First(vehicle, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return vehicle, nil
 }
+
 func (rep *VehicleRepository) GetAll() []model.Vehicle {
 	var vehicles []model.Vehicle
 	rep.db.Find(&vehicles)

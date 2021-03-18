@@ -16,7 +16,7 @@ func NewService(rep *repository.Repository) *Service {
 }
 
 type Vehicle interface {
-	Get()
+	Get(id int) (*model.Vehicle, error)
 	GetAll() []model.Vehicle
 	Create(model.Vehicle) (*model.Vehicle, error)
 	Update()

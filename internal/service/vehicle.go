@@ -15,8 +15,8 @@ func NewVehicleService(rep repository.Vehicle) *VehicleService {
 	}
 }
 
-func (s *VehicleService) Get() {
-
+func (s *VehicleService) Get(id int) (*model.Vehicle, error) {
+	return s.rep.Get(id)
 }
 func (s *VehicleService) GetAll() []model.Vehicle {
 	return s.rep.GetAll()

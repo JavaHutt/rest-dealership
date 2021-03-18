@@ -2,12 +2,14 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/JavaHutt/rest-dealership/internal/model"
 	"github.com/JavaHutt/rest-dealership/internal/service"
 	"github.com/go-chi/chi"
+	"gorm.io/gorm"
 )
 
 type Handler struct {
@@ -48,10 +50,28 @@ func (h Handler) getAllVehicles(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) getVehicleById(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	res := fmt.Sprintf("get by id: %s", id)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Incorrect ID"))
+		return
+	}
+
+	vehicle, err := h.services.Get(id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("Not Found"))
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(res))
+	json.NewEncoder(w).Encode(vehicle)
 }
 
 func (h Handler) createVehicle(w http.ResponseWriter, r *http.Request) {
@@ -70,16 +90,9 @@ func (h Handler) createVehicle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := json.Marshal(created)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to unmarshal JSON"))
-		return
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	w.Write(res)
+	json.NewEncoder(w).Encode(created)
 }
 
 func (h Handler) updateVehicle(w http.ResponseWriter, r *http.Request) {

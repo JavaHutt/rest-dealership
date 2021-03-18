@@ -16,7 +16,7 @@ func NewRepository(db *gorm.DB) *Repository {
 }
 
 type Vehicle interface {
-	Get()
+	Get(id int) (*model.Vehicle, error)
 	GetAll() []model.Vehicle
 	Create(vehicle model.Vehicle) (*model.Vehicle, error)
 	Update()
