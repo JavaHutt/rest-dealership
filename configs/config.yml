@@ -2,7 +2,6 @@ port: 8000
 db:
   host: localhost
   username: test
-  password: test
   dbname: test
   port: 5432
   sslmode: disable
