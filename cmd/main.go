@@ -1,36 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/JavaHutt/rest-dealership/internal/action"
+	"github.com/JavaHutt/rest-dealership/internal/handler"
+	"github.com/JavaHutt/rest-dealership/internal/repository"
+	"github.com/JavaHutt/rest-dealership/internal/service"
 )
 
-type Product struct {
-	gorm.Model
-	Code  string
-	Price uint
-}
-
 func main() {
-	dsn := "host=localhost user=test password=test dbname=test port=5432 sslmode=disable TimeZone=Europe/Samara"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Failed to connect to db: %s", err.Error())
+	repos := repository.NewRepository()
+	services := service.NewService(repos)
+	handlers := handler.NewHandler(services)
+
+	srv := new(action.Server)
+
+	if err := srv.Run("8000", handlers.InitRoutes()); err != nil {
+		log.Fatalf("error while starting http server: %s", err.Error())
 	}
-
-	// Migrate the schema
-	db.AutoMigrate(&Product{})
-
-	// Create
-	db.Create(&Product{Code: "D42", Price: 100})
-
-	// Read
-	var product Product
-	db.First(&product, 1) // find product with integer primary key
-
-	fmt.Printf("product: %+v\n", product)
-
 }
