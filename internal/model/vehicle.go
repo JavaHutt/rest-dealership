@@ -16,7 +16,8 @@ const (
 )
 
 type Vehicle struct {
-	gorm.Model
+	gorm.Model   `json:"-"`
+	ID           uint          `json:"id"              db:"id"            gorm:"primarykey"`
 	Brand        string        `json:"brand"           db:"brand"`
 	VehicleModel string        `json:"vehicle_model"   db:"vehicle_model"`
 	Price        uint          `json:"price"           db:"price"`

@@ -33,9 +33,18 @@ func (h Handler) InitRoutes() *chi.Mux {
 }
 
 func (h Handler) getAllVehicles(w http.ResponseWriter, r *http.Request) {
-	h.services.GetAll()
+	vehicles := h.services.GetAll()
+
+	res, err := json.Marshal(&vehicles)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Failed to unmarshal JSON"))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("getAll method"))
+	w.Write(res)
 }
 
 func (h Handler) getVehicleById(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +72,7 @@ func (h Handler) createVehicle(w http.ResponseWriter, r *http.Request) {
 
 	res, err := json.Marshal(created)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Failed to unmarshal JSON"))
 		return
 	}

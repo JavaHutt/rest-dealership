@@ -18,8 +18,8 @@ func NewVehicleService(rep repository.Vehicle) *VehicleService {
 func (s *VehicleService) Get() {
 
 }
-func (s *VehicleService) GetAll() {
-	s.rep.GetAll()
+func (s *VehicleService) GetAll() []model.Vehicle {
+	return s.rep.GetAll()
 }
 func (s *VehicleService) Create(vehicle model.Vehicle) (*model.Vehicle, error) {
 	return s.rep.Create(vehicle)

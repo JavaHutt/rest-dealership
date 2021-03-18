@@ -17,7 +17,7 @@ func NewService(rep *repository.Repository) *Service {
 
 type Vehicle interface {
 	Get()
-	GetAll()
+	GetAll() []model.Vehicle
 	Create(model.Vehicle) (*model.Vehicle, error)
 	Update()
 	Delete()
