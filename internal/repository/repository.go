@@ -1,10 +1,12 @@
 package repository
 
+import "gorm.io/gorm"
+
 type Repository struct {
 	Vehicle
 }
 
-func NewRepository() *Repository {
+func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{}
 }
 
