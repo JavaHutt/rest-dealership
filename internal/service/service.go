@@ -20,5 +20,5 @@ type Vehicle interface {
 	GetAll() []model.Vehicle
 	Create(model.Vehicle) (*model.Vehicle, error)
 	Update()
-	Delete()
+	Delete(id int) error
 }

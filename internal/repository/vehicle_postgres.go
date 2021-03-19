@@ -44,6 +44,6 @@ func (rep *VehicleRepository) Create(vehicle model.Vehicle) (*model.Vehicle, err
 func (rep *VehicleRepository) Update() {
 
 }
-func (rep *VehicleRepository) Delete() {
-
+func (rep *VehicleRepository) Delete(id int) error {
+	return rep.db.Delete(&model.Vehicle{}, id).Error
 }

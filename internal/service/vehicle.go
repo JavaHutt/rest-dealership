@@ -27,6 +27,6 @@ func (s *VehicleService) Create(vehicle model.Vehicle) (*model.Vehicle, error) {
 func (s *VehicleService) Update() {
 
 }
-func (s *VehicleService) Delete() {
-
+func (s *VehicleService) Delete(id int) error {
+	return s.rep.Delete(id)
 }

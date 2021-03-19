@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -29,7 +30,7 @@ func (h Handler) InitRoutes() *chi.Mux {
 		r.Get("/{id}", h.getVehicleById)
 		r.Post("/", h.createVehicle)
 		r.Put("/", h.updateVehicle)
-		r.Delete("/", h.deleteVehicle)
+		r.Delete("/{id}", h.deleteVehicle)
 	})
 	return r
 }
@@ -91,6 +92,7 @@ func (h Handler) createVehicle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Add("Location", fmt.Sprintf("/api/v1/vehicles/%s", strconv.Itoa(int(created.ID))))
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(created)
 }
@@ -101,6 +103,24 @@ func (h Handler) updateVehicle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) deleteVehicle(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Incorrect ID"))
+		return
+	}
+
+	if err = h.services.Delete(id); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("Not Found"))
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	w.WriteHeader(http.StatusNoContent)
-	w.Write([]byte("delete"))
+	w.Write([]byte("deleted"))
 }
