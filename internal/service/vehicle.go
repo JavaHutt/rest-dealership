@@ -24,8 +24,8 @@ func (s *VehicleService) GetAll() []model.Vehicle {
 func (s *VehicleService) Create(vehicle model.Vehicle) (*model.Vehicle, error) {
 	return s.rep.Create(vehicle)
 }
-func (s *VehicleService) Update() {
-
+func (s *VehicleService) Update(id int, vehicle model.Vehicle) (*model.Vehicle, error) {
+	return s.rep.Update(id, vehicle)
 }
 func (s *VehicleService) Delete(id int) error {
 	return s.rep.Delete(id)

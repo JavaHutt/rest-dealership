@@ -41,9 +41,20 @@ func (rep *VehicleRepository) Create(vehicle model.Vehicle) (*model.Vehicle, err
 	}
 	return &vehicle, nil
 }
-func (rep *VehicleRepository) Update() {
 
+func (rep *VehicleRepository) Update(id int, vehicle model.Vehicle) (*model.Vehicle, error) {
+	toUpdate := new(model.Vehicle)
+
+	if find := rep.db.First(toUpdate, id); find.Error != nil {
+		return nil, find.Error
+	}
+	result := rep.db.Model(toUpdate).Updates(vehicle)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return toUpdate, nil
 }
+
 func (rep *VehicleRepository) Delete(id int) error {
 	return rep.db.Delete(&model.Vehicle{}, id).Error
 }

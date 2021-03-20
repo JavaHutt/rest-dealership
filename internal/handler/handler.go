@@ -29,7 +29,7 @@ func (h Handler) InitRoutes() *chi.Mux {
 		r.Get("/", h.getAllVehicles)
 		r.Get("/{id}", h.getVehicleById)
 		r.Post("/", h.createVehicle)
-		r.Put("/", h.updateVehicle)
+		r.Put("/{id}", h.updateVehicle)
 		r.Delete("/{id}", h.deleteVehicle)
 	})
 	return r
@@ -98,8 +98,37 @@ func (h Handler) createVehicle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) updateVehicle(w http.ResponseWriter, r *http.Request) {
+	var vehicle model.Vehicle
+
+	if err := json.NewDecoder(r.Body).Decode(&vehicle); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Bad request"))
+		return
+	}
+
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Incorrect ID"))
+		return
+	}
+
+	updated, err := h.services.Update(id, vehicle)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("Not Found"))
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Add("Location", fmt.Sprintf("/api/v1/vehicles/%s", strconv.Itoa(int(updated.ID))))
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("update"))
+	json.NewEncoder(w).Encode(updated)
 }
 
 func (h Handler) deleteVehicle(w http.ResponseWriter, r *http.Request) {
@@ -122,5 +151,4 @@ func (h Handler) deleteVehicle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
-	w.Write([]byte("deleted"))
 }
