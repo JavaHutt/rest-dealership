@@ -21,4 +21,5 @@ type Vehicle interface {
 	Create(model.Vehicle) (*model.Vehicle, error)
 	Update(id int, vehicle model.Vehicle) (*model.Vehicle, error)
 	Delete(id int) error
+	SeedData(vehicles []model.Vehicle) error
 }

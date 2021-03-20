@@ -1,0 +1,72 @@
+[
+    {
+        "brand": "Audi",
+        "vehicle_model": "A7",
+        "price": 10000,
+        "status": 0,
+        "mileage": 0
+    },
+    {
+        "brand": "BMW",
+        "vehicle_model": "M5",
+        "price": 30000,
+        "status": 0,
+        "mileage": 0
+    },
+    {
+        "brand": "Mercedes-Benz",
+        "vehicle_model": "AMG",
+        "price": 30000,
+        "status": 0,
+        "mileage": 0
+    },
+    {
+        "brand": "Mazda",
+        "vehicle_model": "6",
+        "price": 5000,
+        "status": 2,
+        "mileage": 13400
+    },
+    {
+        "brand": "Mitsubishi",
+        "vehicle_model": "Lancer",
+        "price": 3000,
+        "status": 1,
+        "mileage": 3580
+    },
+    {
+        "brand": "Porsche",
+        "vehicle_model": "Cayman",
+        "price": 40000,
+        "status": 0,
+        "mileage": 0
+    },
+    {
+        "brand": "Renault",
+        "vehicle_model": "Logan",
+        "price": 800,
+        "status": 3,
+        "mileage": 120000
+    },
+    {
+        "brand": "Volkswagen",
+        "vehicle_model": "Phaeton",
+        "price": 7500,
+        "status": 3,
+        "mileage": 250000
+    },
+    {
+        "brand": "Dodge",
+        "vehicle_model": "Challenger SRT Demon",
+        "price": 40000,
+        "status": 2,
+        "mileage": 0
+    },
+    {
+        "brand": "Ferrari",
+        "vehicle_model": "Testarossa",
+        "price": 1000000,
+        "status": 3,
+        "mileage": 300000
+    }
+]

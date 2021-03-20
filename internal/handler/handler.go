@@ -32,6 +32,7 @@ func (h Handler) InitRoutes() *chi.Mux {
 		r.Put("/{id}", h.updateVehicle)
 		r.Delete("/{id}", h.deleteVehicle)
 	})
+	r.Post("/db/seed", h.seedData)
 	return r
 }
 
@@ -65,7 +66,7 @@ func (h Handler) getVehicleById(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Not Found"))
 			return
 		}
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -86,7 +87,7 @@ func (h Handler) createVehicle(w http.ResponseWriter, r *http.Request) {
 
 	created, err := h.services.Create(vehicle)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -120,7 +121,7 @@ func (h Handler) updateVehicle(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Not Found"))
 			return
 		}
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -145,10 +146,26 @@ func (h Handler) deleteVehicle(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Not Found"))
 			return
 		}
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h Handler) seedData(w http.ResponseWriter, r *http.Request) {
+	var vehicles []model.Vehicle
+
+	if err := json.NewDecoder(r.Body).Decode(&vehicles); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Bad request"))
+		return
+	}
+	if err := h.services.SeedData(vehicles); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
