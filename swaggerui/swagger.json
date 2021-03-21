@@ -1,0 +1,245 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Simple REST API server for car dealership",
+    "version": "1.0.0",
+    "title": "Dealership server"
+  },
+  "host": "localhost:8000",
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "vehicles",
+      "description": "Operations about vehicles"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/vehicles": {
+      "get": {
+        "tags": [
+          "vehicles"
+        ],
+        "summary": "Gets all the vehicles",
+        "description": "",
+        "operationId": "getVehicles",
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "vehicles"
+        ],
+        "summary": "Create vehicle",
+        "description": "",
+        "operationId": "createVehicle",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created vehicle object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Vehicle"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/vehicles/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "The id that needs to be fetched.",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "tags": [
+          "vehicles"
+        ],
+        "summary": "Get vehicle by id",
+        "description": "",
+        "operationId": "getVehicleById",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Vehicle"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Vehicle not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "vehicles"
+        ],
+        "summary": "Update vehicle",
+        "description": "",
+        "operationId": "updatesVehicle",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "List of user object",
+            "required": true,
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Vehicle"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Vehicle"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Vehicle not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "vehicles"
+        ],
+        "summary": "Delete vehicle",
+        "operationId": "deletesVehicle",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Vehicle not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/db/seed": {
+      "post": {
+        "tags": [
+          "db"
+        ],
+        "summary": "Seed db",
+        "description": "",
+        "operationId": "seedsDB",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created vehicle object",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Vehicle"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Vehicle": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "type": "string"
+        },
+        "vehicleModel": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "uint"
+        },
+        "status": {
+          "type": "integer",
+          "description": "Status",
+          "enum": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "mileage": {
+          "type": "integer",
+          "format": "uint"
+        }
+      }
+    }
+  }
+}

@@ -48,12 +48,13 @@ func main() {
 	handlers := handler.NewHandler(services)
 
 	srv := new(action.Server)
+	port := viper.GetString("port")
 	go func() {
 		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 			logrus.Fatalf("Error occured while starting http server: %s", err.Error())
 		}
 	}()
-	logrus.Print("Rest dealership server started...")
+	logrus.Printf("Rest dealership server started on port %s...", port)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

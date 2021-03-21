@@ -5,7 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/JavaHutt/rest-dealership/internal/model"
 	"github.com/JavaHutt/rest-dealership/internal/service"
@@ -33,6 +36,11 @@ func (h Handler) InitRoutes() *chi.Mux {
 		r.Delete("/{id}", h.deleteVehicle)
 	})
 	r.Post("/db/seed", h.seedData)
+
+	workDir, _ := os.Getwd()
+	swaggerDir := http.Dir(filepath.Join(workDir, "swaggerui"))
+	FileServer(r, "/swaggerui", swaggerDir)
+
 	return r
 }
 
@@ -168,4 +176,23 @@ func (h Handler) seedData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func FileServer(r chi.Router, path string, root http.FileSystem) {
+	if strings.ContainsAny(path, "{}*") {
+		panic("FileServer does not permit any URL parameters.")
+	}
+
+	if path != "/" && path[len(path)-1] != '/' {
+		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		path += "/"
+	}
+	path += "*"
+
+	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+		fs.ServeHTTP(w, r)
+	})
 }
