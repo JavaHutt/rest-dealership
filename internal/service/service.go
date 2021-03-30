@@ -5,6 +5,8 @@ import (
 	"github.com/JavaHutt/rest-dealership/internal/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Service struct {
 	Vehicle
 }

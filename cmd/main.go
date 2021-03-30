@@ -8,8 +8,10 @@ import (
 
 	"github.com/JavaHutt/rest-dealership/internal/action"
 	"github.com/JavaHutt/rest-dealership/internal/handler"
+	"github.com/JavaHutt/rest-dealership/internal/model"
 	"github.com/JavaHutt/rest-dealership/internal/repository"
 	"github.com/JavaHutt/rest-dealership/internal/service"
+	"gorm.io/gorm"
 
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -20,6 +22,10 @@ func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
+}
+
+func autoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(new(model.Vehicle))
 }
 
 func main() {
@@ -43,6 +49,10 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("Failed to connect to db: %s", err.Error())
 	}
+	if err = autoMigrate(db); err != nil {
+		logrus.Fatalf("Failed to perform migrations: %s", err.Error())
+	}
+
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
@@ -50,7 +60,7 @@ func main() {
 	srv := new(action.Server)
 	port := viper.GetString("port")
 	go func() {
-		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		if err := srv.Run(port, handlers.InitRoutes()); err != nil {
 			logrus.Fatalf("Error occured while starting http server: %s", err.Error())
 		}
 	}()
